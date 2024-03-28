@@ -1,0 +1,139 @@
+version: "3.9"
+
+services:
+
+  sonic-server-eureka:
+    image: "sonicorg/sonic-server-eureka:{{ SONIC_VERSION }}"
+    container_name: sonic-server-eureka
+    hostname: sonic-server-eureka
+    environment:
+      - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
+      - SONIC_EUREKA_PASSWORD={{ SONIC_EUREKA_PASSWORD }}
+      - SONIC_EUREKA_PORT={{ SONIC_EUREKA_PORT }}
+      - SONIC_EUREKA_HOST=sonic-server-eureka
+    volumes:
+      - "{{ container.get_app_path() }}/logs/:/logs/"
+    networks:
+      - sonic
+
+  sonic-server-gateway:
+    image: "sonicorg/sonic-server-gateway:{{ SONIC_VERSION }}"
+    container_name: sonic-server-gateway
+    hostname: sonic-server-gateway
+    environment:
+      - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
+      - SONIC_EUREKA_PASSWORD={{ SONIC_EUREKA_PASSWORD }}
+      - SONIC_EUREKA_PORT={{ SONIC_EUREKA_PORT }}
+      - SONIC_EUREKA_HOST=sonic-server-eureka
+      - SECRET_KEY={{ SONIC_SECRET_KEY }}
+      - EXPIRE_DAY={{ SONIC_EXPIRE_DAY }}
+    volumes:
+      - "{{ container.get_app_path() }}/logs/:/logs/"
+    depends_on:
+      - sonic-server-eureka
+    networks:
+      - sonic
+    restart: unless-stopped
+
+  {% if SONIC_MYSQL_HOST == "sonic-server-mysql" %}
+  sonic-server-mysql:
+    container_name: sonic-server-mysql
+    image: mysql
+    user: "{{ DOCKER_PUID }}:{{ DOCKER_PGID }}"
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ SONIC_MYSQL_ROOT_PASSWORD }}
+      - MYSQL_DATABASE={{ SONIC_MYSQL_DATABASE }}
+      - MYSQL_USER={{ SONIC_MYSQL_USERNAME }}
+      - MYSQL_PASSWORD={{ SONIC_MYSQL_PASSWORD }}
+    networks:
+      - sonic
+    volumes:
+      - "{{ container.get_app_path() }}/mysql/conf.d:/etc/mysql/conf.d"
+      - "{{ container.get_app_path() }}/mysql/data:/var/lib/mysql"
+  {% endif %}
+
+  sonic-server-controller:
+    image: "sonicorg/sonic-server-controller:{{ SONIC_VERSION }}"
+    container_name: sonic-server-controller
+    environment:
+      - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
+      - SONIC_EUREKA_PASSWORD={{ SONIC_EUREKA_PASSWORD }}
+      - SONIC_EUREKA_PORT={{ SONIC_EUREKA_PORT }}
+      - SONIC_EUREKA_HOST=sonic-server-eureka
+      - MYSQL_HOST={{ SONIC_MYSQL_HOST }}
+      - MYSQL_PORT={{ SONIC_MYSQL_PORT }}
+      - MYSQL_DATABASE={{ SONIC_MYSQL_DATABASE }}
+      - MYSQL_USERNAME={{ SONIC_MYSQL_USERNAME }}
+      - MYSQL_PASSWORD={{ SONIC_MYSQL_PASSWORD }}
+      - SONIC_SERVER_HOST={{ SONIC_SERVER_HOST }}
+      - SONIC_SERVER_PORT={{ SONIC_SERVER_PORT }}
+      - SECRET_KEY={{ SONIC_SECRET_KEY }}
+      - EXPIRE_DAY={{ SONIC_EXPIRE_DAY }}
+      - REGISTER_ENABLE={{ SONIC_REGISTER_ENABLE }}
+      - NORMAL_USER_ENABLE={{ SONIC_NORMAL_USER_ENABLE }}
+      - LDAP_USER_ENABLE={{ SONIC_LDAP_USER_ENABLE }}
+      - LDAP_USER_ID={{ SONIC_LDAP_USER_ID }}
+      - LDAP_BASE_DN={{ SONIC_LDAP_BASE_DN }}
+      - LDAP_BASE={{ SONIC_LDAP_BASE }}
+      - LDAP_USERNAME={{ SONIC_LDAP_USERNAME }}
+      - LDAP_PASSWORD={{ SONIC_LDAP_PASSWORD }}
+      - LDAP_URL={{ SONIC_LDAP_URL }}
+    networks:
+      - sonic
+    volumes:
+      - "{{ container.get_app_path() }}/logs/:/logs/"
+    depends_on:
+      - sonic-server-eureka
+      {% if SONIC_MYSQL_HOST == "sonic-server-mysql" %}
+      - sonic-server-mysql
+      {% endif %}
+    restart: unless-stopped
+
+  sonic-server-folder:
+    image: "sonicorg/sonic-server-folder:{{ SONIC_VERSION }}"
+    container_name: sonic-server-folder
+    environment:
+      - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
+      - SONIC_EUREKA_PASSWORD={{ SONIC_EUREKA_PASSWORD }}
+      - SONIC_EUREKA_HOST=sonic-server-eureka
+      - SONIC_EUREKA_PORT={{ SONIC_EUREKA_PORT }}
+      - SONIC_SERVER_HOST={{ SONIC_SERVER_HOST }}
+      - SONIC_SERVER_PORT={{ SONIC_SERVER_PORT }}
+      - SECRET_KEY={{ SONIC_SECRET_KEY }}
+      - EXPIRE_DAY={{ SONIC_EXPIRE_DAY }}
+    networks:
+      - sonic
+    volumes:
+      - "{{ container.get_app_path() }}/keepFiles/:/keepFiles/"
+      - "{{ container.get_app_path() }}/imageFiles/:/imageFiles/"
+      - "{{ container.get_app_path() }}/recordFiles/:/recordFiles/"
+      - "{{ container.get_app_path() }}/packageFiles/:/packageFiles/"
+      - "{{ container.get_app_path() }}/logs/:/logs/"
+    depends_on:
+      - sonic-server-eureka
+    restart: unless-stopped
+
+  sonic-client-web:
+    image: "sonicorg/sonic-client-web:{{ SONIC_VERSION }}"
+    container_name: sonic-client-web
+    environment:
+      - SONIC_SERVER_HOST={{ SONIC_SERVER_HOST }}
+      - SONIC_SERVER_PORT={{ SONIC_SERVER_PORT }}
+    networks:
+      - nginx
+      - sonic
+    depends_on:
+      - sonic-server-gateway
+    restart: unless-stopped
+    {% if int(SONIC_EXPOSE_PORT, default=0) > 0 %}
+    ports:
+      - "{{ SONIC_EXPOSE_PORT }}:80"
+    {% endif %}
+
+
+networks:
+  sonic:
+    name: sonic
+  nginx:
+    name: nginx

@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+{% for index in range(int(REDROID_COUNT)) %}
+  {% with name = 'redroid' + (int(REDROID_ADB_PORT) + index * 2 - 1)|string %}
+  {{ name }}:
+    image: {{ REDROID_IMAGE }}
+    network_mode: bridge
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      - "{{ container.get_app_path() }}/data/{{ name }}:/data"
+      - "/dev/mali0:/dev/mali0"
+      - "/dev/net/tun:/dev/tun"
+      {% for key, value in container.overlay_files.items() %}
+      - "{{ key }}:{{ value }}"
+      {% endfor %}
+    ports:
+      - {{ int(REDROID_ADB_PORT) + index * 2 }}:5555
+    command:
+      - androidboot.redroid_width=1080
+      - androidboot.redroid_height=1920
+      - androidboot.redroid_dpi=480
+      - androidboot.redroid_gpu_mode={{ REDROID_GPU_MODE }}
+      - androidboot.redroid_virtual_wifi={{ 1 if bool(REDROID_VIRTUAL_WIFI) else 0 }}
+  {% endwith %}
+{% endfor %}
