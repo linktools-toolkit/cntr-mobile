@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  redroid_builder:
+    container_name: redroid_builder
+    build:
+      context: "{{ container.get_path() }}"
+      dockerfile: "{{ container.get_docker_file_path() }}"
+    user: "{{ DOCKER_PUID }}:{{ DOCKER_PGID }}"
+    restart: unless-stopped
+    volumes:
+      - "{{ REDROID_BUILD_PATH }}:/src"
+    working_dir: "/src"
+    networks:
+      - build
+    logging:
+      options:
+        max-size: 1m
+
+networks:
+  build:
+    name: build
