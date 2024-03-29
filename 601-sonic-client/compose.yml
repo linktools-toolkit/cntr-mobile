@@ -1,14 +1,10 @@
-version: "3.9"
-
 services:
   sonic-agent:
-    {% if manager.machine not in ("arm64", "aarch64") %}
+#   {% if manager.machine not in ("arm64", "aarch64") %}
     image: sonicorg/sonic-agent-linux:{{ SONIC_VERSION }}
-    {% else %}
+#   {% else %}
     image: iceblacktea/sonic-agent-linux-arm64:{{ SONIC_VERSION }}
-    {% endif %}
-    container_name: sonic-agent
-    restart: unless-stopped
+#   {% endif %}
     environment:
       - SONIC_SERVER_HOST={{ SONIC_SERVER_HOST }}
       - SONIC_SERVER_PORT={{ SONIC_SERVER_PORT }}
@@ -23,8 +19,8 @@ services:
     network_mode: host
     privileged: true
     volumes:
-      - "/dev/bus/usb:/dev/bus/usb"
-      - "/var/lib/lockdown:/var/lib/lockdown"
-      - "/var/run:/var/run"
-      - "{{ container.get_path() }}/.android/adbkey:/root/.android/adbkey:ro"
-      - "{{ container.get_path() }}/.android/adbkey.pub:/root/.android/adbkey.pub:ro"
+      - '/dev/bus/usb:/dev/bus/usb'
+      - '/var/lib/lockdown:/var/lib/lockdown'
+      - '/var/run:/var/run'
+      - '{{ container.get_path(".android", "adbkey") }}:/root/.android/adbkey:ro'
+      - '{{ container.get_path(".android", "adbkey.pub") }}:/root/.android/adbkey.pub:ro'

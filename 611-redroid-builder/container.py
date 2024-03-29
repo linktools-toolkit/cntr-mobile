@@ -39,5 +39,5 @@ class Container(BaseContainer):
     def configs(self):
         return dict(
             REDROID_BUILD_USER=Config.Lazy(lambda cfg: ''.join(filter(str.isalpha, cfg.get("DOCKER_USER")))),
-            REDROID_BUILD_PATH=Config.Prompt(cached=True),
+            REDROID_BUILD_PATH=Config.Prompt(cached=True, type="path"),
         )
