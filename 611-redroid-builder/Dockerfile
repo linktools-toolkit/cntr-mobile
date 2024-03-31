@@ -27,7 +27,7 @@ RUN (useradd -m -u {{ DOCKER_PUID }} {{ REDROID_BUILD_USER }} || true) \
 
 ENV HOME=/home/{{ REDROID_BUILD_USER }} \
     USER={{ REDROID_BUILD_USER }} \
-    PATH=/src/.repo/repo:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
+    PATH=/src/.repo/repo:/usr/local/bin/scripts:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
 
 USER {{ DOCKER_PUID }}
 

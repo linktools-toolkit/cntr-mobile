@@ -2,7 +2,13 @@ services:
   redroid_builder:
     user: '{{ DOCKER_PUID }}:{{ DOCKER_PGID }}'
     volumes:
-      - '{{ REDROID_BUILD_PATH }}:/src'
+      - '{{ container.get_build_path() }}:/src'
+      - '{{ container.get_path("scripts") }}:/usr/local/bin/scripts:ro'
+    environment:
+      - 'LANG=en_US.UTF-8'
+#     {% for key, value in container.get_envvars().items() %}
+      - '{{ key }}={{ value }}'
+#     {% endfor %}
     working_dir: "/src"
     networks:
       - build
