@@ -19,11 +19,13 @@ RUN apt-get update \
 
 RUN apt-get install -y vim git git-lfs
 
-RUN (useradd -m -u {{ DOCKER_PUID }} {{ REDROID_BUILD_USER }} || true) \
+# {% if DOCKER_PUID != 0 %}
+RUN (groupadd -g {{ DOCKER_PGID }} {{ REDROID_BUILD_USER }} || true) \
+    && useradd -m -u {{ DOCKER_PUID }} -g {{ DOCKER_PGID }} {{ REDROID_BUILD_USER }} \
     && echo "{{ REDROID_BUILD_USER }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && echo {{ REDROID_BUILD_USER }} >/root/username \
     && echo "{{ REDROID_BUILD_USER }}:{{ REDROID_BUILD_USER }}" | chpasswd && adduser {{ REDROID_BUILD_USER }} sudo
-
+# {% endif %}
 
 ENV HOME=/home/{{ REDROID_BUILD_USER }} \
     USER={{ REDROID_BUILD_USER }} \
