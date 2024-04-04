@@ -44,7 +44,6 @@ class Container(BaseContainer):
     @cached_property
     def configs(self):
         return dict(
-            REDROID_BUILD_USER=Config.Lazy(lambda cfg: ''.join(filter(str.isalpha, cfg.get("DOCKER_USER")))),
             REDROID_BUILD_PATH=Config.Prompt(cached=True, type="path"),
         )
 
@@ -53,9 +52,6 @@ class Container(BaseContainer):
         return json.loads(utils.read_file(path)) \
             if os.path.exists(path) \
             else dict()
-
-    def get_build_path(self) -> str:
-        return self.manager.config.get("REDROID_BUILD_PATH", type="path")
 
     @subcommand("set-env", help="Set redroid build environment")
     @subcommand_argument("envs", action=KeyValueAction, nargs="+", help="environment variables")
@@ -98,7 +94,10 @@ class Container(BaseContainer):
     @subcommand("make-arm64-image", help="Build redroid arm64 image")
     def on_exec_make_arm64_image(self):
         p1 = p2 = None
-        path = os.path.join(self.get_build_path(), "out", "target", "product", "redroid_arm64")
+        path = os.path.join(
+            self.manager.config.get("REDROID_BUILD_PATH", type="path"),
+            "out", "target", "product", "redroid_arm64"
+        )
 
         try:
             self.manager.create_process(
@@ -148,5 +147,5 @@ class Container(BaseContainer):
     def on_exec_fix_permission(self):
         self.manager.create_docker_process(
             "exec", "-it", "redroid_builder",
-            "sudo", "chown", "-R", self.manager.config.get("REDROID_BUILD_USER"), "/src/"
+            "sudo", "chown", "-R", self.manager.config.get("DOCKER_USER"), "/src/"
         ).check_call()

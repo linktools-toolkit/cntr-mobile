@@ -1,6 +1,6 @@
 services:
-#{% for index in range(int(REDROID_COUNT)) %}
-#  {% with name = 'redroid' + (int(REDROID_ADB_PORT) + index * 2 - 1)|string %}
+# {% for index in range(int(REDROID_COUNT)) %}
+# {% with name = 'redroid' + (int(REDROID_ADB_PORT) + index * 2 - 1)|string %}
   {{ name }}:
     image: {{ REDROID_IMAGE }}
     network_mode: bridge
@@ -21,4 +21,4 @@ services:
       - androidboot.redroid_gpu_mode={{ REDROID_GPU_MODE }}
       - androidboot.redroid_virtual_wifi={{ 1 if bool(REDROID_VIRTUAL_WIFI) else 0 }}
 # {% endwith %}
-#{% endfor %}
+# {% endfor %}

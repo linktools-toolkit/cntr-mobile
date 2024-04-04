@@ -1,8 +1,8 @@
 services:
-  redroid_builder:
-    user: '{{ DOCKER_PUID }}:{{ DOCKER_PGID }}'
+  redroid-builder:
+    user: '{{ DOCKER_UID }}:{{ DOCKER_GID }}'
     volumes:
-      - '{{ container.get_build_path() }}:/src'
+      - '{{ path(REDROID_BUILD_PATH) }}:/src'
       - '{{ container.get_path("scripts") }}:/usr/local/bin/scripts:ro'
     environment:
       - 'LANG=en_US.UTF-8'

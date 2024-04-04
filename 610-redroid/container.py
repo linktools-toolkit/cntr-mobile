@@ -81,10 +81,6 @@ class Container(BaseContainer):
     @subcommand("clean", help="Clean redroid data files")
     def on_exec_clean(self):
         service = self.choose_service()
-        if not service:
-            self.logger.error(f"Not found any service in {self}")
-            return -1
-
         name = service.get("container_name")
         path = self.get_app_path("data", name)
         if confirm(f"Clean {name} data files", default=False) is False:

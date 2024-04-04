@@ -33,7 +33,7 @@ services:
 # {% if SONIC_MYSQL_HOST == "sonic-server-mysql" %}
   sonic-server-mysql:
     image: mysql
-    user: '{{ DOCKER_PUID }}:{{ DOCKER_PGID }}'
+    user: '{{ DOCKER_UID }}:{{ DOCKER_GID }}'
     environment:
       - MYSQL_ROOT_PASSWORD={{ SONIC_MYSQL_ROOT_PASSWORD }}
       - MYSQL_DATABASE={{ SONIC_MYSQL_DATABASE }}

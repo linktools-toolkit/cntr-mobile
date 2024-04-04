@@ -19,18 +19,21 @@ RUN apt-get update \
 
 RUN apt-get install -y vim git git-lfs
 
-# {% if DOCKER_PUID != 0 %}
-RUN (groupadd -g {{ DOCKER_PGID }} {{ REDROID_BUILD_USER }} || true) \
-    && useradd -m -u {{ DOCKER_PUID }} -g {{ DOCKER_PGID }} {{ REDROID_BUILD_USER }} \
-    && echo "{{ REDROID_BUILD_USER }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
-    && echo {{ REDROID_BUILD_USER }} >/root/username \
-    && echo "{{ REDROID_BUILD_USER }}:{{ REDROID_BUILD_USER }}" | chpasswd && adduser {{ REDROID_BUILD_USER }} sudo
+# {% if DOCKER_UID != 0 %}
+
+RUN (groupadd -g {{ DOCKER_GID }} {{ DOCKER_USER }} || true) \
+    && useradd -m -u {{ DOCKER_UID }} -g {{ DOCKER_GID }} {{ DOCKER_USER }} \
+    && echo "{{ DOCKER_USER }} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
+    && echo {{ DOCKER_USER }} >/root/username \
+    && echo "{{ DOCKER_USER }}:{{ DOCKER_USER }}" | chpasswd && adduser {{ DOCKER_USER }} sudo
+
+USER {{ DOCKER_UID }}
+
+ENV HOME=/home/{{ DOCKER_USER }} \
+    USER={{ DOCKER_USER }}
+
 # {% endif %}
 
-ENV HOME=/home/{{ REDROID_BUILD_USER }} \
-    USER={{ REDROID_BUILD_USER }} \
-    PATH=/src/.repo/repo:/usr/local/bin/scripts:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
-
-USER {{ DOCKER_PUID }}
+ENV PATH=/src/.repo/repo:/usr/local/bin/scripts:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
 
 CMD ["tail", "-f", "/dev/null"]
