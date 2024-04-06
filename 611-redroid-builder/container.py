@@ -60,12 +60,14 @@ class Container(BaseContainer):
         utils.write_file(path, json.dumps(envs, indent=2))
 
     @subcommand("init-repo", help="Initialize redroid repo")
-    @subcommand_argument("-u", "--manifest-url", metavar="URL",
-                         default="https://github.com/redroid-rockchip/platform_manifests.git",
-                         help="manifest repository location")
-    @subcommand_argument("-b", "--manifest-branch", metavar="REVISION",
-                         default="redroid-12.0.0",
-                         help="manifest branch or revision (use HEAD for default)")
+    @subcommand_argument(
+        "-u", "--manifest-url", metavar="URL",
+        default="https://github.com/redroid-rockchip/platform_manifests.git",
+        help="manifest repository location")
+    @subcommand_argument(
+        "-b", "--manifest-branch", metavar="REVISION",
+        default="redroid-12.0.0",
+        help="manifest branch or revision (use HEAD for default)")
     def on_exec_repo_init(self, manifest_url: str, manifest_branch: str):
         self.manager.create_docker_process(
             "exec", "-it", "redroid_builder",

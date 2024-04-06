@@ -1,9 +1,9 @@
 services:
   sonic-agent:
 #   {% if manager.machine not in ("arm64", "aarch64") %}
-    image: sonicorg/sonic-agent-linux:{{ SONIC_VERSION }}
+    image: sonicorg/sonic-agent-linux:{{ SONIC_TAG }}
 #   {% else %}
-    image: iceblacktea/sonic-agent-linux-arm64:{{ SONIC_VERSION }}
+    image: iceblacktea/sonic-agent-linux-arm64:{{ SONIC_TAG }}
 #   {% endif %}
     environment:
       - SONIC_SERVER_HOST={{ SONIC_SERVER_HOST }}

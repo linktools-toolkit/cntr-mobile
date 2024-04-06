@@ -49,7 +49,7 @@ class Container(BaseContainer):
             ##################
             # Service Config #
             ##################
-            SONIC_VERSION="v2.6.3",
+            SONIC_TAG="v2.6.3",
             SONIC_SERVER_HOST=Config.Alias("SONIC_DOMAIN"),  # 必须填前端的域名
             SONIC_SERVER_PORT=Config.Alias("HTTP_PORT", type=int),  # 必须填前端的端口
             SONIC_EUREKA_USERNAME="sonic",

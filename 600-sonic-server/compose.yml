@@ -1,7 +1,7 @@
 services:
 
   sonic-server-eureka:
-    image: 'sonicorg/sonic-server-eureka:{{ SONIC_VERSION }}'
+    image: 'sonicorg/sonic-server-eureka:{{ SONIC_TAG }}'
     hostname: sonic-server-eureka
     environment:
       - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
@@ -14,7 +14,7 @@ services:
       - sonic
 
   sonic-server-gateway:
-    image: 'sonicorg/sonic-server-gateway:{{ SONIC_VERSION }}'
+    image: 'sonicorg/sonic-server-gateway:{{ SONIC_TAG }}'
     hostname: sonic-server-gateway
     environment:
       - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
@@ -47,7 +47,7 @@ services:
 # {% endif %}
 
   sonic-server-controller:
-    image: 'sonicorg/sonic-server-controller:{{ SONIC_VERSION }}'
+    image: 'sonicorg/sonic-server-controller:{{ SONIC_TAG }}'
     environment:
       - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
       - SONIC_EUREKA_PASSWORD={{ SONIC_EUREKA_PASSWORD }}
@@ -83,7 +83,7 @@ services:
     restart: unless-stopped
 
   sonic-server-folder:
-    image: 'sonicorg/sonic-server-folder:{{ SONIC_VERSION }}'
+    image: 'sonicorg/sonic-server-folder:{{ SONIC_TAG }}'
     container_name: sonic-server-folder
     environment:
       - SONIC_EUREKA_USERNAME={{ SONIC_EUREKA_USERNAME }}
@@ -107,7 +107,7 @@ services:
     restart: unless-stopped
 
   sonic-client-web:
-    image: 'sonicorg/sonic-client-web:{{ SONIC_VERSION }}'
+    image: 'sonicorg/sonic-client-web:{{ SONIC_TAG }}'
     container_name: sonic-client-web
     environment:
       - SONIC_SERVER_HOST={{ SONIC_SERVER_HOST }}

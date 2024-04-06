@@ -37,7 +37,7 @@ class Container(BaseContainer):
     @cached_property
     def configs(self):
         return dict(
-            SONIC_VERSION="v2.6.3",
+            SONIC_TAG="v2.6.3",
             SONIC_SERVER_HOST=Config.Prompt(default="10.10.10.1", cached=True),
             SONIC_SERVER_PORT=Config.Prompt(default=4000, cached=True, type=int),
             SONIC_AGENT_HOST=Config.Prompt(default=utils.get_lan_ip()),
