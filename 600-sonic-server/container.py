@@ -44,7 +44,7 @@ class Container(BaseContainer):
     def configs(self):
         return dict(
             SONIC_DOMAIN=self.get_nginx_domain("sonic"),
-            SONIC_EXPOSE_PORT=None,
+            SONIC_EXPOSE_PORT=Config.Alias(type=int, default=0),
 
             ##################
             # Service Config #
@@ -102,10 +102,4 @@ class Container(BaseContainer):
             self.manager.config.get("SONIC_DOMAIN"),
             self.get_path("nginx.conf"),
             https=False,
-        )
-
-    def on_started(self):
-        self.manager.change_owner(
-            self.get_app_path("mysql"),
-            self.manager.config.get("DOCKER_USER")
         )

@@ -11,10 +11,10 @@ services:
       - AGENT_HOST={{ SONIC_AGENT_HOST }}
       - AGENT_PORT={{ SONIC_AGENT_PORT }}
       - AGENT_KEY={{ SONIC_AGENT_KEY }}
-      - ANDROID_ENABLE={{ "true" if bool(SONIC_AGENT_ANDROID_ENABLE) else "false" }}
+      - ANDROID_ENABLE={{ "true" if SONIC_AGENT_ANDROID_ENABLE else "false" }}
       - USE_SAS=true
-      - IOS_ENABLE={{ "true" if bool(SONIC_AGENT_IOS_ENABLE) else "false" }}
-#     {% if bool(SONIC_AGENT_IOS_ENABLE) %}
+      - IOS_ENABLE={{ "true" if SONIC_AGENT_IOS_ENABLE else "false" }}
+#     {% if SONIC_AGENT_IOS_ENABLE %}
       - WDA_BUNDLE_ID={{ WDA_BUNDLE_ID }}
 #     {% endif %}
       - SGM_ENABLE=true
@@ -24,5 +24,5 @@ services:
       - '/dev/bus/usb:/dev/bus/usb'
       - '/var/lib/lockdown:/var/lib/lockdown'
       - '/var/run:/var/run'
-      - '{{ container.get_path(".android", "adbkey") }}:/root/.android/adbkey:ro'
-      - '{{ container.get_path(".android", "adbkey.pub") }}:/root/.android/adbkey.pub:ro'
+      - '{{ chown(CONTAINER_PATH/".android"/"adbkey") }}:/root/.android/adbkey:ro'
+      - '{{ chown(CONTAINER_PATH/".android"/"adbkey.pub") }}:/root/.android/adbkey.pub:ro'

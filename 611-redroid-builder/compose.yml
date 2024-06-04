@@ -2,8 +2,8 @@ services:
   redroid-builder:
     user: '{{ DOCKER_UID }}:{{ DOCKER_GID }}'
     volumes:
-      - '{{ path(REDROID_BUILD_PATH) }}:/src'
-      - '{{ container.get_path("scripts") }}:/usr/local/bin/scripts:ro'
+      - '{{ REDROID_BUILD_PATH | mkdir | chown(docker_user) }}:/src'
+      - '{{ chown(CONTAINER_PATH/"scripts") }}:/usr/local/bin/scripts:ro'
     environment:
       - 'LANG=en_US.UTF-8'
 #     {% for key, value in container.get_envvars().items() %}

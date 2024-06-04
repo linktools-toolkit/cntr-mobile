@@ -9,7 +9,7 @@ services:
       - SONIC_EUREKA_PORT={{ SONIC_EUREKA_PORT }}
       - SONIC_EUREKA_HOST=sonic-server-eureka
     volumes:
-      - '{{ container.get_app_path("logs") }}:/logs/'
+      - '{{ mkdir(APP_PATH/"logs") | chown }}:/logs/'
     networks:
       - sonic
 
@@ -24,7 +24,7 @@ services:
       - SECRET_KEY={{ SONIC_SECRET_KEY }}
       - EXPIRE_DAY={{ SONIC_EXPIRE_DAY }}
     volumes:
-      - '{{ container.get_app_path("logs") }}:/logs/'
+      - '{{ mkdir(APP_PATH/"logs") | chown }}:/logs/'
     depends_on:
       - sonic-server-eureka
     networks:
@@ -42,8 +42,8 @@ services:
     networks:
       - sonic
     volumes:
-      - '{{ container.get_app_path("mysql", "conf.d") }}:/etc/mysql/conf.d'
-      - '{{ container.get_app_path("mysql", "data") }}:/var/lib/mysql'
+      - '{{ mkdir(APP_PATH/"mysql"/"conf.d") | chown(docker_user) }}:/etc/mysql/conf.d'
+      - '{{ mkdir(APP_PATH/"mysql"/"data") | chown(docker_user) }}:/var/lib/mysql'
 # {% endif %}
 
   sonic-server-controller:
@@ -74,7 +74,7 @@ services:
     networks:
       - sonic
     volumes:
-      - "{{ container.get_app_path() }}/logs/:/logs/"
+      - '{{ mkdir(APP_PATH/"logs") | chown(docker_user) }}:/logs/'
     depends_on:
       - sonic-server-eureka
 #     {% if SONIC_MYSQL_HOST == "sonic-server-mysql" %}
@@ -97,11 +97,11 @@ services:
     networks:
       - sonic
     volumes:
-      - '{{ container.get_app_path("keepFiles") }}:/keepFiles/'
-      - '{{ container.get_app_path("imageFiles") }}:/imageFiles/'
-      - '{{ container.get_app_path("recordFiles") }}:/recordFiles/'
-      - '{{ container.get_app_path("packageFiles") }}:/packageFiles/'
-      - '{{ container.get_app_path("logs") }}:/logs/'
+      - '{{ mkdir(APP_PATH/"keepFiles") | chown }}:/keepFiles/'
+      - '{{ mkdir(APP_PATH/"imageFiles") | chown }}:/imageFiles/'
+      - '{{ mkdir(APP_PATH/"recordFiles") | chown }}:/recordFiles/'
+      - '{{ mkdir(APP_PATH/"packageFiles") | chown }}:/packageFiles/'
+      - '{{ mkdir(APP_PATH/"logs") | chown }}:/logs/'
     depends_on:
       - sonic-server-eureka
     restart: unless-stopped
@@ -118,7 +118,7 @@ services:
     depends_on:
       - sonic-server-gateway
     restart: unless-stopped
-#   {% if int(SONIC_EXPOSE_PORT, default=0) > 0 %}
+#   {% if SONIC_EXPOSE_PORT > 0 %}
     ports:
       - '{{ SONIC_EXPOSE_PORT }}:80'
 #   {% endif %}

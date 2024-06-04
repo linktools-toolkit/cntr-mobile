@@ -43,7 +43,7 @@ class Container(BaseContainer):
             SONIC_AGENT_HOST=Config.Prompt(default=utils.get_lan_ip()),
             SONIC_AGENT_PORT=Config.Prompt(default=7777, cached=True, type=int),
             SONIC_AGENT_KEY=Config.Prompt(cached=True),
-            SONIC_AGENT_ANDROID_ENABLE=True,
-            SONIC_AGENT_IOS_ENABLE=True,
+            SONIC_AGENT_ANDROID_ENABLE=Config.Alias(type=bool, default=True),
+            SONIC_AGENT_IOS_ENABLE=Config.Alias(type=bool, default=True),
             WDA_BUNDLE_ID=Config.Prompt(default="com.facebook.WebDriverAgentRunner1mosec", cached=True),
         )
