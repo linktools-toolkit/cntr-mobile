@@ -70,26 +70,26 @@ class Container(BaseContainer):
         help="manifest branch or revision (use HEAD for default)")
     def on_exec_repo_init(self, manifest_url: str, manifest_branch: str):
         self.manager.create_docker_process(
-            "exec", "-it", "redroid_builder",
+            "exec", "-it", "redroid-builder",
             "repo", "init", "-u", manifest_url, "-b", manifest_branch, "--depth=1", "--git-lfs",
         ).check_call()
 
     @subcommand("sync-repo", help="Sync redroid repo")
     def on_exec_repo_sync(self):
         self.manager.create_docker_process(
-            "exec", "-it", "redroid_builder",
+            "exec", "-it", "redroid-builder",
             "repo", "sync", "-c",
         ).check_call()
 
         self.manager.create_docker_process(
-            "exec", "-it", "redroid_builder",
+            "exec", "-it", "redroid-builder",
             "repo", "forall", "-g", "lfs", "-c", "git", "lfs", "pull",
         ).check_call()
 
     @subcommand("build-arm64", help="Build redroid arm64 image")
     def on_exec_build_arm64(self):
         self.manager.create_docker_process(
-            "exec", "-it", "redroid_builder",
+            "exec", "-it", "redroid-builder",
             "build-arm64.sh",
         ).check_call()
 
@@ -148,6 +148,6 @@ class Container(BaseContainer):
     @subcommand("fix-permission", help="fix redroid source permission")
     def on_exec_fix_permission(self):
         self.manager.create_docker_process(
-            "exec", "-it", "redroid_builder",
+            "exec", "-it", "redroid-builder",
             "sudo", "chown", "-R", self.manager.config.get("DOCKER_USER"), "/src/"
         ).check_call()
