@@ -26,14 +26,12 @@
   / ==ooooooooooooooo==.o.  ooo= //   ,``--{)B     ,"
  /_==__==========__==_ooo__ooo=_/'   /___________,"
 """
-import json
 import os.path
 import subprocess
-from typing import Dict
+from pathlib import Path
 
 from linktools import Config, utils
 from linktools.cli import subcommand, subcommand_argument
-from linktools.cli.argparse import KeyValueAction
 from linktools.container import BaseContainer
 from linktools.decorator import cached_property
 
@@ -41,23 +39,21 @@ from linktools.decorator import cached_property
 class Container(BaseContainer):
     """build android image"""
 
+    @classmethod
+    def _get_home_path(cls, cfg: Config):
+        try:
+            import pwd
+            passwd = pwd.getpwnam(cfg.get("DOCKER_USER"))
+            return Path(passwd.pw_dir)
+        except ImportError:
+            return Path.home()
+
     @cached_property
     def configs(self):
         return dict(
             REDROID_BUILD_PATH=Config.Prompt(cached=True, type="path"),
+            REDROID_HOME_PATH=Config.Lazy(self._get_home_path),
         )
-
-    def get_envvars(self) -> Dict[str, str]:
-        path = self.get_app_path("configs", "env.json", create_parent=True)
-        return json.loads(utils.read_file(path)) \
-            if os.path.exists(path) \
-            else dict()
-
-    @subcommand("set-env", help="Set redroid build environment")
-    @subcommand_argument("envs", action=KeyValueAction, nargs="+", help="environment variables")
-    def on_exec_set_env(self, envs: Dict[str, str]):
-        path = self.get_app_path("configs", "env.json", create_parent=True)
-        utils.write_file(path, json.dumps(envs, indent=2))
 
     @subcommand("init-repo", help="Initialize redroid repo")
     @subcommand_argument(
@@ -86,14 +82,14 @@ class Container(BaseContainer):
             "repo", "forall", "-g", "lfs", "-c", "git", "lfs", "pull",
         ).check_call()
 
-    @subcommand("build-arm64", help="Build redroid arm64 image")
-    def on_exec_build_arm64(self):
+    @subcommand("build-rk3588", help="Build rk3588 redroid arm64 image")
+    def on_exec_build_rk3588(self):
         self.manager.create_docker_process(
             "exec", "-it", "redroid-builder",
-            "build-arm64.sh",
+            "build-rk3588",
         ).check_call()
 
-    @subcommand("make-arm64-image", help="Build redroid arm64 image")
+    @subcommand("make-image", help="Build redroid arm64 image")
     def on_exec_make_arm64_image(self):
         p1 = p2 = None
         path = os.path.join(

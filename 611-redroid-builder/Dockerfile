@@ -32,8 +32,12 @@ USER {{ DOCKER_UID }}
 ENV HOME=/home/{{ DOCKER_USER }} \
     USER={{ DOCKER_USER }}
 
+# {% else %}
+
+ENV HOME=/root
+
 # {% endif %}
 
-ENV PATH=/src/.repo/repo:/usr/local/bin/scripts:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
+ENV PATH=/src/.repo/repo:/scripts:/src/prebuilts/jdk/jdk8/linux-x86/bin/:$PATH
 
 CMD ["tail", "-f", "/dev/null"]
