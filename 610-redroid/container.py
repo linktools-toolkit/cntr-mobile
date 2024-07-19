@@ -30,7 +30,7 @@ import os
 import shutil
 
 from linktools import Config
-from linktools.cli import subcommand, subcommand_argument
+from linktools.cli import subcommand
 from linktools.container import BaseContainer
 from linktools.decorator import cached_property
 from linktools.rich import confirm
@@ -49,34 +49,14 @@ class Container(BaseContainer):
         )
 
     @cached_property
-    def overlay_path(self):
-        return self.get_app_path("overlay", create=True)
-
-    @cached_property
     def overlay_files(self):
         result = dict()
-        for root, dirs, files in os.walk(self.overlay_path):
+        for root, dirs, files in os.walk(self.get_app_path("overlay")):
+            root = os.path.abspath(root)
             for name in files:
                 path = os.path.join(root, name)
-                result[path] = path[len(self.overlay_path):]
+                result[path] = path[len(root):]
         return result
-
-    @subcommand("install-overlay", help="install overlay to Android devices")
-    @subcommand_argument("url", help="overlay url")
-    def on_exec_install_overlay(self, url: str):
-        with self.manager.environ.get_url_file(url) as overlay_file:
-            temp_dir = self.get_temp_path("overlay", create=True)
-            temp_file = overlay_file.save(temp_dir)
-            self.logger.info(f"Clean {self.overlay_path}")
-            shutil.rmtree(self.overlay_path, ignore_errors=True)
-            self.logger.info(f"Write {self.overlay_path}")
-            shutil.unpack_archive(temp_file, self.overlay_path)
-            os.remove(temp_file)
-
-    @subcommand("uninstall-overlay", help="uninstall overlay from Android devices")
-    def on_exec_uninstall_overlay(self):
-        self.logger.info(f"Clean {self.overlay_path}")
-        shutil.rmtree(self.overlay_path, ignore_errors=True)
 
     @subcommand("clean", help="Clean redroid data files")
     def on_exec_clean(self):
