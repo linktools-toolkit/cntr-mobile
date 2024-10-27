@@ -15,9 +15,9 @@ services:
     ports:
       - '{{ REDROID_ADB_PORT + index * 2 }}:5555'
     command:
-      - androidboot.redroid_width=1080
-      - androidboot.redroid_height=1920
-      - androidboot.redroid_dpi=480
+      - androidboot.redroid_width={{ REDROID_WIDTH }}
+      - androidboot.redroid_height={{ REDROID_HEIGHT }}
+      - androidboot.redroid_dpi={{ REDROID_DPI }}
       - androidboot.redroid_gpu_mode={{ REDROID_GPU_MODE }}
       - androidboot.redroid_virtual_wifi={{ 1 if REDROID_VIRTUAL_WIFI else 0 }}
 # {% endwith %}
