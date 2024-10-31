@@ -32,8 +32,8 @@ from pathlib import Path
 
 from linktools import Config, utils
 from linktools.cli import subcommand, subcommand_argument
-from linktools.container import BaseContainer
 from linktools.decorator import cached_property
+from linktools_cntr import BaseContainer
 
 
 class Container(BaseContainer):
@@ -93,7 +93,7 @@ class Container(BaseContainer):
     def on_exec_make_arm64_image(self):
         p1 = p2 = None
         path = os.path.join(
-            self.manager.config.get("REDROID_BUILD_PATH", type="path"),
+            self.get_config("REDROID_BUILD_PATH", type="path"),
             "out", "target", "product", "redroid_arm64"
         )
 
@@ -145,5 +145,5 @@ class Container(BaseContainer):
     def on_exec_fix_permission(self):
         self.manager.create_docker_process(
             "exec", "-it", "redroid-builder",
-            "sudo", "chown", "-R", self.manager.config.get("DOCKER_USER"), "/src/"
+            "sudo", "chown", "-R", self.get_config("DOCKER_USER"), "/src/"
         ).check_call()

@@ -31,9 +31,9 @@ import shutil
 
 from linktools import Config
 from linktools.cli import subcommand
-from linktools.container import BaseContainer
 from linktools.decorator import cached_property
 from linktools.rich import confirm
+from linktools_cntr import BaseContainer
 
 
 class Container(BaseContainer):

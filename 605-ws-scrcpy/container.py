@@ -32,8 +32,8 @@ import zipfile
 
 import yaml
 from linktools import Config, utils
-from linktools.container import BaseContainer, ExposeLink
 from linktools.decorator import cached_property
+from linktools_cntr import BaseContainer, ExposeLink
 
 
 class Container(BaseContainer):
@@ -55,7 +55,7 @@ class Container(BaseContainer):
 
     @cached_property
     def source_path(self):
-        tag = self.manager.config.get("WS_SCRCPY_TAG")
+        tag = self.get_config("WS_SCRCPY_TAG")
 
         zip_path = self.get_app_path(f"ws-scrcpy-{tag}.zip")
         source_path = str(zip_path) + ".unzip"
@@ -83,6 +83,6 @@ class Container(BaseContainer):
             yaml.dump({
                 "server": [{
                     "secure": False,
-                    "port": self.manager.config.get("WS_SCRCPY_PORT")
+                    "port": self.get_config("WS_SCRCPY_PORT")
                 }]
             }, fd)
