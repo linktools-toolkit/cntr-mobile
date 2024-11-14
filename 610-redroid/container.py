@@ -54,11 +54,11 @@ class Container(BaseContainer):
     @cached_property
     def overlay_files(self):
         result = dict()
-        for root, dirs, files in os.walk(self.get_app_path("overlay")):
-            root = os.path.abspath(root)
+        overlay_path = os.path.abspath(self.get_app_path("overlay"))
+        for root, dirs, files in os.walk(overlay_path):
             for name in files:
-                path = os.path.join(root, name)
-                result[path] = path[len(root):]
+                path = os.path.abspath(os.path.join(root, name))
+                result[path] = os.path.join("/", path[len(overlay_path):])
         return result
 
     @subcommand("clean", help="Clean redroid data files")
