@@ -41,7 +41,7 @@ class Container(BaseContainer):
     @cached_property
     def configs(self):
         return dict(
-            REDROID_IMAGE="iceblacktea/redroid-arm64:12.0.0-241204",
+            REDROID_IMAGE="iceblacktea/redroid-arm64:12.0.0-241218",
             REDROID_COUNT=Config.Prompt(default=3, type=int, cached=True),
             REDROID_WIDTH=Config.Alias(default=720, type=int),
             REDROID_HEIGHT=Config.Alias(default=1280, type=int),
