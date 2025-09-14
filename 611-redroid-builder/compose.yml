@@ -3,7 +3,7 @@ services:
     user: '{{ DOCKER_UID }}:{{ DOCKER_GID }}'
     volumes:
       - '{{ REDROID_BUILD_PATH | mkdir | chown(docker_user) }}:/src'
-      - '{{ chown(CONTAINER_PATH/"scripts", docker_user) }}:/scripts:ro'
+      - '{{ (SOURCE_PATH/"scripts") | chown(docker_user) }}:/scripts:ro'
 #     {% if DOCKER_UID != 0 %}
       - '{{ mkdir(REDROID_HOME_PATH/".ssh") | chown(docker_user) }}:/home/{{ DOCKER_USER }}/.ssh:ro'
 #     {% else %}

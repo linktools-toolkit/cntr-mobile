@@ -28,6 +28,7 @@
 """
 import random
 import string
+from typing import Iterable
 
 from linktools import Config
 from linktools.decorator import cached_property
@@ -37,7 +38,7 @@ from linktools_cntr import BaseContainer, ExposeLink
 class Container(BaseContainer):
 
     @property
-    def dependencies(self) -> [str]:
+    def dependencies(self) -> Iterable[str]:
         return ["nginx"]
 
     @cached_property
@@ -87,7 +88,7 @@ class Container(BaseContainer):
         )
 
     @cached_property
-    def exposes(self) -> [ExposeLink]:
+    def exposes(self) -> Iterable[ExposeLink]:
         return [
             self.expose_public(
                 "Sonic", "cellphone", "Sonic云真机",
@@ -100,6 +101,6 @@ class Container(BaseContainer):
     def on_starting(self):
         self.write_nginx_conf(
             self.get_config("SONIC_DOMAIN"),
-            self.get_path("nginx.conf"),
+            self.get_source_path("nginx.conf"),
             https=False,
         )

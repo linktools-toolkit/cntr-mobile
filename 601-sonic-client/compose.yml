@@ -24,4 +24,4 @@ services:
       - '/dev/bus/usb:/dev/bus/usb'
       - '/var/lib/lockdown:/var/lib/lockdown'
       - '/var/run:/var/run'
-      - '{{ chown(CONTAINER_PATH/".android") }}:/root/.android:ro'
+      - '{{ (SOURCE_PATH/".android") | chown }}:/root/.android:ro'
